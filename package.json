@@ -1,0 +1,25 @@
+{
+  "name": "project-syntax",
+  "version": "1.0.0",
+  "description": "A Website where friends get to code along",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhiramseshu/Project-Syntax.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhiramseshu/Project-Syntax/issues"
+  },
+  "homepage": "https://github.com/abhiramseshu/Project-Syntax#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
