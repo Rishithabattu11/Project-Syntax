@@ -1,7 +1,7 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 const app = express();
-const bodyParser = require("body-parser");
+import bodyParser from "body-parser";
 const port = 4000;
 
 app.use(cors());
@@ -19,10 +19,6 @@ function started() {
 app.listen(port, started);
 
 var sendgetCodeChefRatingObj = {
-  method: "GET",
-};
-
-var sendCodeforcesResult = {
   method: "GET",
 };
 
@@ -45,7 +41,10 @@ async function getCodeChefRating(username) {
   return result.currentRating;
 }
 
-// codeforces
+var sendCodeforcesResult = {
+  method: "GET",
+};
+
 async function getCodeforcesRating(username) {
   let result = -1;
   let url = `https://codeforces.com/api/user.info?handles=${username}`;
@@ -63,19 +62,12 @@ async function getCodeforcesRating(username) {
   return result.result[0].rating;
 }
 
-// var username = "battu";
+var username = "rishithabattu";
+var val1 = await getCodeChefRating(username).then((result) => {
+  console.log("codechef rating:", result);
+});
 
-// var val1 = await getCodeChefRating(username).then((result) => {});
-
-// var username = "Abhiram";
-// var val2 = await getCodeforcesRating(username).then((result) => {});
-async function getRatings() {
-  var username1 = "battu";
-  var val1 = await getCodeChefRating(username1);
-  console.log("CodeChef Rating:", val1);
-
-  var username2 = "Abhiram";
-  var val2 = await getCodeforcesRating(username2);
-  console.log("Codeforces Rating:", val2);
-}
-getRatings();
+var username = "M_Abhiram";
+var val2 = await getCodeforcesRating(username).then((result) => {
+  console.log("codeforces rating:", result);
+});
