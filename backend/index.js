@@ -18,20 +18,17 @@ function started() {
 }
 app.listen(port, started);
 
-var sendgetCodeChefRatingObj = {
-  method: "GET",
-};
-
 async function getCodeChefRating(username) {
   let result = -1;
   let url = `https://codechef-api.vercel.app/handle/${username}`;
+  var sendgetCodeChefRatingObj = { method: "GET" };
   let fecthResult = await fetch(url, sendgetCodeChefRatingObj).catch(
     (error) => {
       console.error("Error:", error);
       return -1;
     }
   );
-  if (fecthResult.status != 200) {
+  if (fecthResult === -1 || fecthResult.status != 200) {
     return -1;
   }
   result = await fecthResult.json();
@@ -41,18 +38,15 @@ async function getCodeChefRating(username) {
   return result.currentRating;
 }
 
-var sendCodeforcesResult = {
-  method: "GET",
-};
-
 async function getCodeforcesRating(username) {
   let result = -1;
   let url = `https://codeforces.com/api/user.info?handles=${username}`;
+  var sendCodeforcesResult = { method: "GET" };
   let fetchResult = await fetch(url, sendCodeforcesResult).catch((error) => {
     console.error("Error:", error);
     return -1;
   });
-  if (fetchResult.status !== 200) {
+  if (fetchResult === -1 || fetchResult.status != 200) {
     return -1;
   }
   result = await fetchResult.json();
@@ -62,12 +56,68 @@ async function getCodeforcesRating(username) {
   return result.result[0].rating;
 }
 
-var username = "rishithabattu";
-var val1 = await getCodeChefRating(username).then((result) => {
+async function getLeetcodeRating(username) {
+  let result = -1;
+  let url = `https://leetcode.com/graphql`;
+  const query = `
+    query getContestRanking($username: String!) {
+      userContestRanking(username: $username) {
+        rating
+        globalRanking
+        totalParticipants
+        attendedContestsCount
+      } }`;
+  var sendgetLeetCodeRatingObj = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: { username },
+    }),
+  };
+  let fetchResult = await fetch(url, sendgetLeetCodeRatingObj).catch(
+    (error) => {
+      console.error("Fetch Error:", error);
+      return -1;
+    }
+  );
+
+  if (fetchResult === -1 || fetchResult.status !== 200) {
+    console.error("Request failed or returned non-200 status");
+    return -1;
+  }
+
+  result = await fetchResult.json();
+
+  if (
+    !result.data ||
+    !result.data.userContestRanking ||
+    result.data.userContestRanking === null
+  ) {
+    console.error("Invalid username or no contest data found");
+    return -1;
+  }
+
+  const { rating, globalRanking, totalParticipants, attendedContestsCount } =
+    result.data.userContestRanking;
+
+  var finalRating = Math.floor(rating);
+  return finalRating;
+}
+
+var codeChefUsername = "rishithabattu";
+var val1 = await getCodeChefRating(codeChefUsername).then((result) => {
   console.log("codechef rating:", result);
 });
 
-var username = "M_Abhiram";
-var val2 = await getCodeforcesRating(username).then((result) => {
+var codeForcesUsername = "M_Abhiram";
+var val2 = await getCodeforcesRating(codeForcesUsername).then((result) => {
   console.log("codeforces rating:", result);
+});
+
+var leetCodeUsername = "22h51a6610";
+var val3 = await getLeetcodeRating(leetCodeUsername).then((result) => {
+  console.log("leetcode rating:", result);
 });
