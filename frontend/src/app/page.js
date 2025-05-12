@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import fire from "/public/fire.svg";
 
 export default function Home() {
   const [authMode, setAuthMode] = useState(null);
@@ -12,12 +14,14 @@ export default function Home() {
         <div>
           <h2 className="text-6xl font-extrabold text-[#ffffff]">RankedIn</h2>
         </div>
-
         {/* Heading */}
         <div>
-          <h1 className="text-2xl font-bold leading-tight text-gray-300">
-            Unite. Compete. Conquer Together.
-          </h1>
+          <div className="flex items-center gap-1 justify-center">
+            <h1 className="text-2xl font-bold leading-tight text-gray-300">
+              Unite. Compete. Conquer Together.
+            </h1>
+            <Image src={fire} alt="Illustration" width={20} height={20} />
+          </div>
           <p className="mt-3 text-lg text-gray-300">
             Jump into coding rooms, dominate the leaderboard, and tackle epic
             challenges with your crew!
@@ -37,20 +41,20 @@ export default function Home() {
             <div className="space-y-4 flex flex-col items-center">
               <button
                 onClick={() => setAuthMode("login")}
-                className="w-48 bg-[#5C43DA] hover:bg-[#5C43DA] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
+                className="w-48 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
               >
                 Login
               </button>
               <button
                 onClick={() => setAuthMode("signup")}
-                className="w-48 bg-white text-gray-900 hover:bg-gray-200 transition px-6 py-3 rounded-lg text-lg font-semibold text-center"
+                className="w-48 bg-white text-gray-900 hover:bg-gray-300 transition px-6 py-3 rounded-lg text-lg font-semibold text-center"
               >
                 Sign Up
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-xl font-bold mb-4 capitalize text-center">
+              <h2 className="text-xl font-bold mb-4 capitalize text-center ">
                 {authMode}
               </h2>
               <form className="space-y-4 flex flex-col items-center justify-center">
@@ -66,7 +70,7 @@ export default function Home() {
                 />
                 <button
                   type="submit"
-                  className="w-30 bg-[#5C43DA] hover:bg-purple-700 transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
+                  className="w-30 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
                 >
                   {authMode === "login" ? "Login" : "Sign Up"}
                 </button>
