@@ -3,12 +3,64 @@
 import { useState } from "react";
 import Image from "next/image";
 import fire from "/public/fire.svg";
+import { useRouter } from "next/navigation"; // ✅ Correct import
 
 export default function Home() {
+  const router = useRouter(); // ✅ Initialize the router here
   const [authMode, setAuthMode] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (message) => {
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { id, message }]);
+
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    }, 2000);
+  };
+
+  const handleLogin = () => {
+    if (!username) {
+      addNotification("⚠️ Username required!");
+      return;
+    }
+    if (!password) {
+      addNotification("⚠️ Password required!");
+      return;
+    }
+    console.log("Logging in with:", username, password);
+    router.push("/"); // ✅ Navigate to Dashboard after login
+  };
+
+  const handleSignup = () => {
+    if (!username) {
+      addNotification("⚠️ Username required!");
+      return;
+    }
+    if (!password) {
+      addNotification("⚠️ Password required!");
+      return;
+    }
+    console.log("Signing up with:", username, password);
+    router.push("/setup-handles"); // ✅ Navigate to Setup Handle after signup
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#14161A] text-white px-4 font-sans">
+    <div className="min-h-screen flex items-center justify-center bg-[#14161A] text-white px-4 font-sans animate-slide-in">
+      {/* Notification Popup Container */}
+      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
+        {notifications.map((notif) => (
+          <div
+            key={notif.id}
+            className="bg-white text-gray-800 px-4 py-2 rounded-md shadow-md transition-transform animate-slide-in"
+          >
+            {notif.message}
+          </div>
+        ))}
+      </div>
+
       <div className="text-center space-y-7 max-w-xl flex flex-col items-center justify-center mx-auto">
         {/* Title */}
         <div>
@@ -61,16 +113,21 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Username"
-                  className="w-[100%]  p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
                 <input
                   type="password"
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
                 <button
-                  type="submit"
+                  type="button"
                   className="w-30 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
+                  onClick={authMode === "login" ? handleLogin : handleSignup}
                 >
                   {authMode === "login" ? "Login" : "Sign Up"}
                 </button>
