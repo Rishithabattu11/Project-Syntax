@@ -7,10 +7,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#14161A] text-white px-4 font-sans">
-      <div className="text-center space-y-7 max-w-xl">
+      <div className="text-center space-y-7 max-w-xl flex flex-col items-center justify-center mx-auto">
+        {/* Title */}
+        <div>
+          <h2 className="text-6xl font-extrabold text-[#ffffff]">RankedIn</h2>
+        </div>
+
         {/* Heading */}
         <div>
-          <h1 className="text-4xl font-bold leading-tight">
+          <h1 className="text-2xl font-bold leading-tight text-gray-300">
             Unite. Compete. Conquer Together.
           </h1>
           <p className="mt-3 text-lg text-gray-300">
@@ -21,53 +26,57 @@ export default function Home() {
 
         {/* Login/Signup Box */}
         <div
-          className="relative bg-[#1F1F22] backdrop-blur-md p-6 md:p-8 rounded-2xl"
+          className="relative bg-[#1F1F22] backdrop-blur-md p-6 md:p-8 rounded-xl flex flex-col items-center justify-center mx-auto"
           style={{
-            boxShadow: "0px 0px 40px 12px rgba(93, 68, 218, 0.7)",
+            boxShadow: "0px 0px 40px 12px #282348",
+            textAlign: "center",
+            width: "fit-content",
           }}
         >
           {authMode === null ? (
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col items-center">
               <button
                 onClick={() => setAuthMode("login")}
-                className="w-full bg-[#5D44DA] hover:bg-purple-700 transition py-3 rounded-lg text-lg font-semibold"
+                className="w-48 bg-[#5C43DA] hover:bg-[#5C43DA] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
               >
                 Login
               </button>
               <button
                 onClick={() => setAuthMode("signup")}
-                className="w-full bg-white text-gray-900 hover:bg-gray-200 transition py-3 rounded-lg text-lg font-semibold"
+                className="w-48 bg-white text-gray-900 hover:bg-gray-200 transition px-6 py-3 rounded-lg text-lg font-semibold text-center"
               >
                 Sign Up
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-xl font-bold mb-4 capitalize">{authMode}</h2>
-              <form className="space-y-4">
+              <h2 className="text-xl font-bold mb-4 capitalize text-center">
+                {authMode}
+              </h2>
+              <form className="space-y-4 flex flex-col items-center justify-center">
                 <input
                   type="text"
                   placeholder="Username"
-                  className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5D44DA] outline-none"
+                  className="w-[100%]  p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
                 <input
                   type="password"
                   placeholder="Password"
-                  className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5D44DA] outline-none"
+                  className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
                 <button
                   type="submit"
-                  className="w-full bg-[#5D44DA] hover:bg-purple-700 transition py-3 rounded-lg text-lg font-semibold"
+                  className="w-30 bg-[#5C43DA] hover:bg-purple-700 transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
                 >
                   {authMode === "login" ? "Login" : "Sign Up"}
                 </button>
               </form>
-              <p className="mt-4 text-sm text-gray-400">
+              <p className="mt-4 text-sm text-gray-400 text-center">
                 {authMode === "login" ? (
                   <>
                     Don't have an account?{" "}
                     <button
-                      className="text-[#5D44DA] hover:underline"
+                      className="text-[#5C43DA] hover:underline"
                       onClick={() => setAuthMode("signup")}
                     >
                       Sign up instead
@@ -77,7 +86,7 @@ export default function Home() {
                   <>
                     Already have an account?{" "}
                     <button
-                      className="text-[#5D44DA] hover:underline"
+                      className="text-[#5C43DA] hover:underline"
                       onClick={() => setAuthMode("login")}
                     >
                       Login instead
