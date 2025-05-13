@@ -33,7 +33,12 @@ const emojis = [
   "⏳",
 ];
 
-const mockRooms = [{ id: "123456" }, { id: "654321" }, { id: "987654" }];
+const mockRooms = [
+  { id: "123456" },
+  { id: "654321" },
+  { id: "987654" },
+  { id: "334343" },
+];
 
 export default function Dashboard() {
   const router = useRouter();
@@ -86,7 +91,7 @@ export default function Dashboard() {
 
       {/* Popup Modal */}
       {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center">
           <div className="bg-[#1F1F22] p-6 rounded-lg shadow-lg text-center">
             <h2 className="text-xl font-bold text-white mb-4">
               Join or Create Room
