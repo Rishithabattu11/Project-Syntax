@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import fire from "/public/fire.svg";
-import { useRouter } from "next/navigation"; // ✅ Correct import
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter(); // ✅ Initialize the router here
+  const router = useRouter();
   const [authMode, setAuthMode] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // ✅ Toggle state
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (message) => {
@@ -31,7 +32,6 @@ export default function Home() {
       return;
     }
     console.log("Logging in with:", username, password);
-    router.push("/"); // ✅ Navigate to Dashboard after login
   };
 
   const handleSignup = () => {
@@ -44,7 +44,7 @@ export default function Home() {
       return;
     }
     console.log("Signing up with:", username, password);
-    router.push("/setup-handles"); // ✅ Navigate to Setup Handle after signup
+    router.push("/setup-handles");
   };
 
   return (
@@ -66,6 +66,7 @@ export default function Home() {
         <div>
           <h2 className="text-6xl font-extrabold text-[#ffffff]">RankedIn</h2>
         </div>
+
         {/* Heading */}
         <div>
           <div className="flex items-center gap-1 justify-center">
@@ -75,8 +76,7 @@ export default function Home() {
             <Image src={fire} alt="Illustration" width={20} height={20} />
           </div>
           <p className="mt-3 text-lg text-gray-300">
-            Jump into coding rooms, dominate the leaderboard, and tackle epic
-            challenges with your crew!
+            Jump into coding rooms, dominate the leaderboard, and tackle epic challenges with your crew!
           </p>
         </div>
 
@@ -106,9 +106,7 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <h2 className="text-xl font-bold mb-4 capitalize text-center ">
-                {authMode}
-              </h2>
+              <h2 className="text-xl font-bold mb-4 capitalize text-center">{authMode}</h2>
               <form className="space-y-4 flex flex-col items-center justify-center">
                 <input
                   type="text"
@@ -117,13 +115,37 @@ export default function Home() {
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
+
+                {/* Password Input */}
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
+
+                {/* ✅ Smaller Toggle Switch BELOW Password Input */}
+                <div className="w-[100%] flex items-center gap-2 mt-1">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={() => setShowPassword(!showPassword)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-7 h-4 bg-gray-600 rounded-full peer-checked:bg-[#38C793] peer-focus:ring-[#38C793] transition-all relative">
+                      <div
+                        className={`absolute top-[2px] left-[2px] w-3 h-3 bg-white rounded-full transition-transform ${
+                          showPassword ? "translate-x-[13px]" : "translate-x-0"
+                        }`}
+                      ></div>
+                    </div>
+                  </label>
+                  <span className="text-gray-400 text-xs">Show Password</span>
+                </div>
+
+
                 <button
                   type="button"
                   className="w-30 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
@@ -132,6 +154,8 @@ export default function Home() {
                   {authMode === "login" ? "Login" : "Sign Up"}
                 </button>
               </form>
+
+              {/* Toggle between Login and Signup */}
               <p className="mt-4 text-sm text-gray-400 text-center">
                 {authMode === "login" ? (
                   <>

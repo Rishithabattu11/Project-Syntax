@@ -1,22 +1,12 @@
 import express from "express";
 import cors from "cors";
-const app = express();
 import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+const app = express();
 const port = 4000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-function temp(req, res) {
-  res.send("Hello World!");
-}
-
-app.get("/", temp);
-
-function started() {
-  console.log(`Server started on port ${port}`);
-}
-app.listen(port, started);
 
 async function getCodeChefRating(username) {
   let result = -1;
@@ -60,13 +50,13 @@ async function getLeetcodeRating(username) {
   let result = -1;
   let url = `https://leetcode.com/graphql`;
   const query = `
-    query getContestRanking($username: String!) {
-      userContestRanking(username: $username) {
-        rating
+  query getContestRanking($username: String!) {
+    userContestRanking(username: $username) {
+      rating
         globalRanking
         totalParticipants
         attendedContestsCount
-      } }`;
+        } }`;
   var sendgetLeetCodeRatingObj = {
     method: "POST",
     headers: {
@@ -96,7 +86,6 @@ async function getLeetcodeRating(username) {
     !result.data.userContestRanking ||
     result.data.userContestRanking === null
   ) {
-    console.error("Invalid username or no contest data found");
     return -1;
   }
 
@@ -107,17 +96,27 @@ async function getLeetcodeRating(username) {
   return finalRating;
 }
 
-var codeChefUsername = "rishithabattu";
-var val1 = await getCodeChefRating(codeChefUsername).then((result) => {
-  console.log("codechef rating:", result);
-});
+function temp(req, res) {
+  res.send("Hello World!");
+}
 
-var codeForcesUsername = "M_Abhiram";
-var val2 = await getCodeforcesRating(codeForcesUsername).then((result) => {
-  console.log("codeforces rating:", result);
-});
+app.get("/", temp);
 
-var leetCodeUsername = "22h51a6610";
-var val3 = await getLeetcodeRating(leetCodeUsername).then((result) => {
-  console.log("leetcode rating:", result);
-});
+function started() {
+  console.log(`Server started on port ${port}`);
+}
+app.listen(port, started);
+
+async function handleRatings(req, res) {
+  const { codeChefUsername, codeForcesUsername, leetCodeUsername } = req.body;
+  var val1 = await getCodeChefRating(codeChefUsername);
+  var val2 = await getCodeforcesRating(codeForcesUsername);
+  var val3 = await getLeetcodeRating(leetCodeUsername);
+  res.status(200).json({
+    CodeChefRating: val1,
+    CodeforcesRating: val2,
+    LeetcodeRating: val3,
+  });
+}
+
+app.post("/getRatings", handleRatings);

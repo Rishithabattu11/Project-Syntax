@@ -12,7 +12,7 @@ export default function SetupHandlesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -22,14 +22,48 @@ export default function SetupHandlesPage() {
     console.log("Codeforces Handle:", codeforces);
     console.log("CodeChef Handle:", codechef);
 
-    setLeetCode("");
-    setCodeforces("");
-    setCodechef("");
+    const usernames = {
+      codeChefUsername: codechef,
+      codeForcesUsername: codeforces,
+      leetCodeUsername: leetCode,
+    };
 
-    setTimeout(() => {
+    var sendObj = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(usernames),
+    };
+
+    var results = await fetch("http://localhost:4000/getRatings", sendObj);
+
+    if (!results.ok) {
+      console.error("Failed to fetch ratings");
+      return;
+    }
+
+    const data = await results.json();
+
+    console.log(data);
+    if (
+      data.CodeChefRating != -1 &&
+      data.CodeforcesRating != -1 &&
+      data.LeetcodeRating != -1
+    ) {
+      setLeetCode("");
+      setCodeforces("");
+      setCodechef("");
+
+      setTimeout(() => {
+        setSubmitted(false);
+        router.push("/dashboard");
+      }, 2000);
+    } else {
+      setIsSubmitting(false);
       setSubmitted(false);
-      router.push("/dashboard");
-    }, 2000);
+      return;
+    }
   };
 
   return (
