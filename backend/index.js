@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import fs from "fs";
 import jwt from "jsonwebtoken";
 const app = express();
 const port = 4000;
@@ -96,16 +97,6 @@ async function getLeetcodeRating(username) {
   return finalRating;
 }
 
-function temp(req, res) {
-  res.send("Hello World!");
-}
-
-app.get("/", temp);
-
-function started() {
-  console.log(`Server started on port ${port}`);
-}
-app.listen(port, started);
 
 async function handleRatings(req, res) {
   const { codeChefUsername, codeForcesUsername, leetCodeUsername } = req.body;
@@ -120,3 +111,20 @@ async function handleRatings(req, res) {
 }
 
 app.post("/getRatings", handleRatings);
+
+
+
+update
+
+
+
+function temp(req, res) {
+  res.send("Hello World!");
+}
+
+app.get("/", temp);
+
+function started() {
+  console.log(`Server started on port ${port}`);
+}
+app.listen(port, started);
