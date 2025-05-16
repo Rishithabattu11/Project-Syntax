@@ -3,11 +3,85 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import fs from "fs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
 const app = express();
 const port = 4000;
+dotenv.config();
+const secret = process.env.SECRET_KEY;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+function reader() {
+  let users = fs.readFileSync("users.json", "utf-8");
+  return JSON.parse(users);
+}
+function writer(users) {
+  fs.writeFileSync("users.json", JSON.stringify(users));
+}
+
+function generateToken(username) {
+  let token = jwt.sign({ username }, secret, { expiresIn: "1h" });
+  return token;
+}
+
+function authentication(req, res, next) {
+  let val = req.headers.authorization;
+  if (val) {
+    let token = val.split(" ")[1];
+    jwt.verify(token, secret, (err, decodedMessage) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.user = decodedMessage;
+      next();
+    });
+  } else res.sendStatus(401);
+}
+
+function handleSignup(req, res) {
+  let { username, password } = req.body;
+  let users = reader();
+  var existing = users.find((u) => u.username === username);
+  if (existing) {
+    res.status(409).send("User exists");
+  } else {
+    let Obj = {
+      username: username,
+      password: password,
+      handles: {},
+      myTodos: [],
+      roomIds: [],
+    };
+    users.push(Obj);
+    writer(users);
+    res.status(200).json({
+      Message: "succesfull",
+      token: generateToken(username),
+    });
+  }
+}
+
+app.post("/signup", handleSignup);
+
+function handleLogin(req, res) {
+  let { username, password } = req.body;
+  let users = reader();
+  var check = users.find(
+    (u) => u.username === username && u.password === password
+  );
+  if (check) {
+    res.status(200).json({
+      Message: "succesfull",
+      token: generateToken(username),
+    });
+  } else {
+    res.status(404).send("User Not Found");
+  }
+}
+
+app.post("/login", handleLogin);
 
 async function getCodeChefRating(username) {
   let result = -1;
@@ -97,7 +171,6 @@ async function getLeetcodeRating(username) {
   return finalRating;
 }
 
-
 async function handleRatings(req, res) {
   const { codeChefUsername, codeForcesUsername, leetCodeUsername } = req.body;
   var val1 = await getCodeChefRating(codeChefUsername);
@@ -111,12 +184,6 @@ async function handleRatings(req, res) {
 }
 
 app.post("/getRatings", handleRatings);
-
-
-
-update
-
-
 
 function temp(req, res) {
   res.send("Hello World!");
