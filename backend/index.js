@@ -23,6 +23,7 @@ function writer(users) {
 
 function generateToken(username) {
   let token = jwt.sign({ username }, secret, { expiresIn: "1h" });
+  console.log(token);
   return token;
 }
 
@@ -56,7 +57,7 @@ function handleSignup(req, res) {
     };
     users.push(Obj);
     writer(users);
-    res.status(200).json({
+    res.json({
       Message: "succesfull",
       token: generateToken(username),
     });
@@ -72,7 +73,7 @@ function handleLogin(req, res) {
     (u) => u.username === username && u.password === password
   );
   if (check) {
-    res.status(200).json({
+    res.json({
       Message: "succesfull",
       token: generateToken(username),
     });
@@ -183,7 +184,7 @@ async function handleRatings(req, res) {
   });
 }
 
-app.post("/getRatings", handleRatings);
+app.post("/getRatings", authentication, handleRatings);
 
 function temp(req, res) {
   res.send("Hello World!");

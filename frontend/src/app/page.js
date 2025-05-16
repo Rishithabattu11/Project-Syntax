@@ -22,7 +22,7 @@ export default function Home() {
     }, 2000);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!username) {
       addNotification("⚠️ Username required!");
       return;
@@ -31,10 +31,37 @@ export default function Home() {
       addNotification("⚠️ Password required!");
       return;
     }
-    console.log("Logging in with:", username, password);
+
+    var userpass = {
+      username: username,
+      password: password,
+    };
+
+    var sendObj = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userpass),
+    };
+    console.log(userpass);
+    var results = await fetch("http://localhost:4000/login", sendObj);
+
+    if (!results.ok) {
+      addNotification("Username or Password is Incorrect");
+      return;
+    }
+    const data = await results.json();
+
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      router.push("/dashboard");
+    } else {
+      addNotification("❌ Login failed or token not received");
+    }
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!username) {
       addNotification("⚠️ Username required!");
       return;
@@ -43,8 +70,34 @@ export default function Home() {
       addNotification("⚠️ Password required!");
       return;
     }
-    console.log("Signing up with:", username, password);
-    router.push("/setup-handles");
+
+    var userpass = {
+      username: username,
+      password: password,
+    };
+
+    var sendObj = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userpass),
+    };
+
+    var results = await fetch("http://localhost:4000/signup", sendObj);
+    if (!results.ok) {
+      addNotification(" Username Alreadty Exists!");
+      return;
+    }
+
+    const data = await results.json();
+
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      router.push("/setup-handles");
+    } else {
+      addNotification("❌ Login failed or token not received");
+    }
   };
 
   return (
@@ -76,7 +129,8 @@ export default function Home() {
             <Image src={fire} alt="Illustration" width={20} height={20} />
           </div>
           <p className="mt-3 text-lg text-gray-300">
-            Jump into coding rooms, dominate the leaderboard, and tackle epic challenges with your crew!
+            Jump into coding rooms, dominate the leaderboard, and tackle epic
+            challenges with your crew!
           </p>
         </div>
 
@@ -106,7 +160,9 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <h2 className="text-xl font-bold mb-4 capitalize text-center">{authMode}</h2>
+              <h2 className="text-xl font-bold mb-4 capitalize text-center">
+                {authMode}
+              </h2>
               <form className="space-y-4 flex flex-col items-center justify-center">
                 <input
                   type="text"
@@ -144,7 +200,6 @@ export default function Home() {
                   </label>
                   <span className="text-gray-400 text-xs">Show Password</span>
                 </div>
-
 
                 <button
                   type="button"

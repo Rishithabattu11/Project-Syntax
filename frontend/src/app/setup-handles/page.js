@@ -14,15 +14,17 @@ export default function SetupHandlesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    var token = localStorage.getItem("token");
     setIsSubmitting(true);
     setSubmitted(true);
+
+    var auth="Bearer "+token;
 
     console.log("LeetCode Handle:", leetCode);
     console.log("Codeforces Handle:", codeforces);
     console.log("CodeChef Handle:", codechef);
 
-    const usernames = {
+    const platformusernames = {
       codeChefUsername: codechef,
       codeForcesUsername: codeforces,
       leetCodeUsername: leetCode,
@@ -32,8 +34,9 @@ export default function SetupHandlesPage() {
       method: "post",
       headers: {
         "Content-Type": "application/json",
+        "Authorization" : auth,
       },
-      body: JSON.stringify(usernames),
+      body: JSON.stringify(platformusernames),
     };
 
     var results = await fetch("http://localhost:4000/getRatings", sendObj);

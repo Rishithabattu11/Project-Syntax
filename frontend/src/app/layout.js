@@ -16,16 +16,16 @@ export const metadata = {
   description: "Compete & Conquer",
   icons: "/rankediconcropped.png",
   extend: {
-  keyframes: {
-    'slide-in': {
-      '0%': { transform: 'translateX(50%)', opacity: '0' },
-      '100%': { transform: 'translateX(0)', opacity: '1' },
+    keyframes: {
+      "slide-in": {
+        "0%": { transform: "translateX(50%)", opacity: "0" },
+        "100%": { transform: "translateX(0)", opacity: "1" },
+      },
+    },
+    animation: {
+      "slide-in": "slide-in 0.3s ease-out forwards",
     },
   },
-  animation: {
-    'slide-in': 'slide-in 0.3s ease-out forwards',
-  },
-}
 };
 
 export default function RootLayout({ children }) {
@@ -39,4 +39,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
