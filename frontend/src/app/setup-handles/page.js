@@ -10,15 +10,23 @@ export default function SetupHandlesPage() {
   const [codechef, setCodechef] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState([]);
   const router = useRouter();
+
+  const removeErrorForHandle = (handleName) => {
+    setErrorMessages((prev) => prev.filter((err) => err.handle !== handleName));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     var token = localStorage.getItem("token");
     setIsSubmitting(true);
     setSubmitted(true);
+    setIsLoading(true);
+    setErrorMessages([]);
 
-    var auth="Bearer "+token;
+    var auth = "Bearer " + token;
 
     console.log("LeetCode Handle:", leetCode);
     console.log("Codeforces Handle:", codeforces);
@@ -34,39 +42,54 @@ export default function SetupHandlesPage() {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        "Authorization" : auth,
+        authorization: auth,
       },
       body: JSON.stringify(platformusernames),
     };
 
     var results = await fetch("http://localhost:4000/getRatings", sendObj);
 
+    setIsLoading(false);
+
     if (!results.ok) {
-      console.error("Failed to fetch ratings");
+      console.error("Authentication Failed");
       return;
     }
 
     const data = await results.json();
 
-    console.log(data);
-    if (
-      data.CodeChefRating != -1 &&
-      data.CodeforcesRating != -1 &&
-      data.LeetcodeRating != -1
-    ) {
-      setLeetCode("");
-      setCodeforces("");
-      setCodechef("");
+    let tempErrors = [];
 
-      setTimeout(() => {
-        setSubmitted(false);
-        router.push("/dashboard");
-      }, 2000);
-    } else {
+    if (data.CodeChefRating === -1) {
+      tempErrors.push({
+        handle: "CodeChef",
+        message: "❌ Invalid CodeChef handle.",
+      });
+    }
+    if (data.CodeforcesRating === -1) {
+      tempErrors.push({
+        handle: "Codeforces",
+        message: "❌ Invalid Codeforces handle.",
+      });
+    }
+    if (data.LeetcodeRating === -1) {
+      tempErrors.push({
+        handle: "LeetCode",
+        message: "❌ Invalid LeetCode handle.",
+      });
+    }
+
+    if (tempErrors.length > 0) {
+      setErrorMessages(tempErrors);
       setIsSubmitting(false);
       setSubmitted(false);
       return;
     }
+
+    setTimeout(() => {
+      setSubmitted(false);
+      router.push("/dashboard");
+    }, 2000);
   };
 
   return (
@@ -82,6 +105,14 @@ export default function SetupHandlesPage() {
         </p>
       </div>
 
+      {/* Loading Indicator */}
+      {isLoading && (
+        <div className="absolute top-2 right-4 bg-[#5C43DA] text-white px-4 py-2 rounded-lg shadow-lg transition-all text-sm flex items-center gap-2">
+          ⏳ Fetching rankings...
+          <span className="animate-spin h-5 w-5 border-4 border-t-transparent border-white rounded-full"></span>
+        </div>
+      )}
+
       {/* Image Section */}
       <div className="mb-2 flex flex-col items-center">
         <Image
@@ -92,7 +123,7 @@ export default function SetupHandlesPage() {
           className="rounded-lg shadow-lg transition-transform hover:scale-105"
           priority
         />
-        <p className="text-sm text-gray-400 mt-2 text-center">
+        <p className="text-sm text-gray-400 mt-2 mb-2 text-center">
           Refer to this example to enter your coding handles correctly.
         </p>
       </div>
@@ -100,7 +131,7 @@ export default function SetupHandlesPage() {
       {/* Compact Card with Inputs */}
       <div
         className="relative bg-[#1F1F22] backdrop-blur-md p-4 rounded-2xl shadow-2xl w-full max-w-[250px] border border-gray-700"
-        style={{ boxShadow: "0px 0px 40px 12px #282348" }}
+        style={{ boxShadow: "0px 0px 50px 12px #282348" }}
       >
         <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
           {/* LeetCode */}
@@ -119,7 +150,10 @@ export default function SetupHandlesPage() {
               <input
                 type="text"
                 value={leetCode}
-                onChange={(e) => setLeetCode(e.target.value)}
+                onChange={(e) => {
+                  setLeetCode(e.target.value);
+                  removeErrorForHandle("LeetCode");
+                }}
                 placeholder="Handle"
                 className="py-1.5 px-3 rounded-md bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] text-sm outline-none w-[170px]"
                 disabled={isSubmitting}
@@ -144,7 +178,10 @@ export default function SetupHandlesPage() {
               <input
                 type="text"
                 value={codeforces}
-                onChange={(e) => setCodeforces(e.target.value)}
+                onChange={(e) => {
+                  setCodeforces(e.target.value);
+                  removeErrorForHandle("Codeforces");
+                }}
                 placeholder="Handle"
                 className="py-1.5 px-3 rounded-md bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] text-sm outline-none w-[170px]"
                 disabled={isSubmitting}
@@ -169,7 +206,10 @@ export default function SetupHandlesPage() {
               <input
                 type="text"
                 value={codechef}
-                onChange={(e) => setCodechef(e.target.value)}
+                onChange={(e) => {
+                  setCodechef(e.target.value);
+                  removeErrorForHandle("CodeChef");
+                }}
                 placeholder="Handle"
                 className="py-1.5 px-3 rounded-md bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] text-sm outline-none w-[170px]"
                 disabled={isSubmitting}
@@ -189,12 +229,18 @@ export default function SetupHandlesPage() {
             {isSubmitting ? "Submitting..." : "Save Handles"}
           </button>
         </form>
+      </div>
 
-        {submitted && (
-          <div className="absolute top-2 right-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all text-sm">
-            ✅ Successfully Submitted!
+      {/* Stylish Popups */}
+      <div className="fixed bottom-4 right-4 flex flex-col items-end space-y-2 z-50">
+        {errorMessages.map((error, index) => (
+          <div
+            key={index}
+            className="bg-[#F2994A] text-white text-xs px-3 py-2 rounded-xl shadow-lg animate-fade-in-up transition-all"
+          >
+            {error.message}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

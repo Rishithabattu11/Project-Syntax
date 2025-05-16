@@ -23,7 +23,6 @@ function writer(users) {
 
 function generateToken(username) {
   let token = jwt.sign({ username }, secret, { expiresIn: "1h" });
-  console.log(token);
   return token;
 }
 
