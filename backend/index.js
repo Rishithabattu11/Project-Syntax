@@ -173,9 +173,21 @@ async function getLeetcodeRating(username) {
 
 async function handleRatings(req, res) {
   const { codeChefUsername, codeForcesUsername, leetCodeUsername } = req.body;
+  const initial = req.headers.initial;
   var val1 = await getCodeChefRating(codeChefUsername);
   var val2 = await getCodeforcesRating(codeForcesUsername);
   var val3 = await getLeetcodeRating(leetCodeUsername);
+  if (initial === "1") {
+    let users = reader();
+    let user = users.find((u) => u.username === req.user.username);
+    let Obj = {
+      codeChefUsername: codeChefUsername,
+      codeForcesUsername: codeForcesUsername,
+      leetCodeUsername: leetCodeUsername,
+    };
+    user.handles = Obj;
+    writer(users);
+  }
   res.status(200).json({
     CodeChefRating: val1,
     CodeforcesRating: val2,

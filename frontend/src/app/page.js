@@ -10,7 +10,7 @@ export default function Home() {
   const [authMode, setAuthMode] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // ✅ Toggle state
+  const [showPassword, setShowPassword] = useState(false); 
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (message) => {

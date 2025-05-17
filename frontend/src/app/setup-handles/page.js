@@ -43,6 +43,7 @@ export default function SetupHandlesPage() {
       headers: {
         "Content-Type": "application/json",
         authorization: auth,
+        initial: 1,
       },
       body: JSON.stringify(platformusernames),
     };
