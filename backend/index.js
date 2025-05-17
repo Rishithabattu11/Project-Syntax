@@ -9,10 +9,16 @@ const app = express();
 const port = 4000;
 dotenv.config();
 const secret = process.env.SECRET_KEY;
-
 app.use(cors());
 app.use(bodyParser.json());
 
+function roomReader() {
+  let users = fs.readFileSync("rooms.json", "utf-8");
+  return JSON.parse(users);
+}
+function roomWriter(rooms) {
+  fs.writeFileSync("rooms.json", JSON.stringify(rooms));
+}
 function reader() {
   let users = fs.readFileSync("users.json", "utf-8");
   return JSON.parse(users);
@@ -196,6 +202,57 @@ async function handleRatings(req, res) {
 }
 
 app.post("/getRatings", authentication, handleRatings);
+
+function generateRoomId() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
+function handleCreateRoom(req, res) {
+  const username = req.user.username;
+  let users = reader();
+
+  let user = users.find((u) => u.username === username);
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  let roomId = generateRoomId();
+  let newRoom = { id: roomId, people: [username], todos: [] };
+  let rooms = roomReader();
+
+  rooms.push(newRoom);
+  user.roomIds.push(roomId);
+  writer(users);
+  roomWriter(rooms);
+
+  res.status(200).json({
+    message: "created room successfully",
+    id: roomId,
+  });
+}
+
+app.post("/createRoom", authentication, handleCreateRoom);
+
+function handleJoinRoom(req, res) {
+  const roomId = req.params.id;
+  const username = req.user.username;
+
+  let users = reader();
+  let rooms = roomReader();
+
+  let user = users.find((u) => u.username === username);
+  let room = rooms.find((r) => r.id == roomId);
+
+  if (!room) return res.status(404).send("Room Not Found");
+
+  user.roomIds.push(roomId);
+  room.people.push(username);
+
+  res.status(200).json({
+    message: "Joined room successfully",
+    id: roomId,
+  });
+}
+
+app.post("/joinRoom/:id", authentication, handleJoinRoom);
 
 function temp(req, res) {
   res.send("Hello World!");

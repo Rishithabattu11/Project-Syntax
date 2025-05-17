@@ -90,7 +90,7 @@ export default function SetupHandlesPage() {
     setTimeout(() => {
       setSubmitted(false);
       router.push("/dashboard");
-    }, 2000);
+    }, 500);
   };
 
   return (
