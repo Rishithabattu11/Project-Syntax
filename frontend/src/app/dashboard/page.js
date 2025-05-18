@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   const handleJoinRoom = () => {
     if (!/^\d{6}$/.test(roomId)) {
-      addNotification("⚠️ Room ID must be exactly 6 numeric digits (0-9)!");
+      addNotification("Room ID must be exactly 6 digits!");
     } else {
       router.push(`/room/${roomId}`);
       setShowPopup(false);
@@ -46,33 +46,76 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#14161A] text-white">
+    <div
+      className="min-h-screen flex text-white bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/hellorita.jpg')" }}
+    >
       {/* Sidebar */}
-      <div className="w-16 bg-[#1F1F22] flex flex-col items-center py-4 space-y-4">
+      <div className="w-20 bg-white/1 backdrop-blur-md shadow-lg flex flex-col items-center py-6 space-y-6 rounded-r-xl">
         {mockRooms.map((room, index) => (
           <button
             key={room.id}
-            className="w-12 h-12 text-2xl flex items-center justify-center transition-transform hover:scale-110"
+            className="w-12 h-12 text-2xl flex item`s-center justify-center rounded-full transition-transform hover:scale-120"
             onClick={() => router.push(`/room/${room.id}`)}
           >
             {uniqueEmojis[index]}
           </button>
         ))}
         {/* Plus Icon */}
-        <button
-          className="w-10 h-10 rounded-lg bg-[#5C43DA] flex items-center justify-center text-white text-2xl font-bold hover:bg-[#44387c] transition-transform hover:scale-110"
-          onClick={() => {
-            setShowPopup(true);
-            setPopupMode(null);
-          }}
-        >
-          +
-        </button>
+        {/* <button
+    className="w-12 h-12 rounded-full bg-[#5C43DA] flex items-center justify-center text-white text-2xl font-bold hover:bg-[#44387c] hover:scale-110 transition-all"
+    onClick={() => {
+      setShowPopup(true);
+      setPopupMode(null);
+    }}
+  >
+    +
+  </button> */}
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center">
-        <h1 className="text-3xl">Welcome to Dashboard</h1>
+      <div className="flex-1 flex flex-col items-center justify-center relative">
+        <h1 className="text-5xl mb-10">Welcome to Dashboard !</h1>
+        {/* Two Transparent Cards in the Background */}
+        {/* Two Transparent Cards in the Background */}
+        <div className="flex gap-16">
+          {" "}
+          {/* Increased spacing */}
+          {/* Create Room Card */}
+          <div className="w-96 p-8 rounded-xl bg-white/10 backdrop-blur-sm shadow-lg text-center border border-white/40">
+            {" "}
+            {/* Added white border */}
+            <h2 className="text-2xl font-semibold mb-4">Create Room</h2>
+            <p className="mb-4 text-white/80">
+              Start your own session and invite others!
+            </p>
+            <button
+              onClick={handleCreateRoom}
+              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition"
+            >
+              Generate & Enter Room
+            </button>
+          </div>
+          {/* Join Room Card */}
+          <div className="w-96 p-8 rounded-xl bg-white/10 backdrop-blur-md shadow-lg text-center border border-white/40">
+            {" "}
+            {/* Added white border */}
+            <h2 className="text-2xl font-semibold mb-4">Join Room</h2>
+            <input
+              type="text"
+              placeholder="Enter 6-digit Room ID"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="w-full px-4 py-2 rounded-md bg-white/10 text-white placeholder-white focus:ring-1 focus:ring-[#A0A0A0] outline-none border border-white/40 mb-4"
+            />
+            <button
+              onClick={handleJoinRoom}
+              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition"
+            >
+              Join Room
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Notification Popup Container */}
@@ -80,33 +123,16 @@ export default function Dashboard() {
         {notifications.map((notif) => (
           <div
             key={notif.id}
-            className={`bg-[#1F1F22] text-white px-5 py-3 rounded-md shadow-md border ${
-              notif.type === "error" ? "border-red-500" : "border-green-500"
-            } animate-slide-in flex items-center justify-between gap-3`}
-            style={{
-              boxShadow:
-                notif.type === "error"
-                  ? "0px 0px 20px 4px #D32F2F"
-                  : "0px 0px 20px 4px #28A745",
-            }}
+            className={`bg-white/5 backdrop-blur-sm text-gray-300 text-1xl px-4 py-2 rounded-xl shadow-lg border border-white/1 flex items-center justify-between gap-3 transition-opacity duration-200 `}
           >
-            <span>{notif.message}</span>
-            <button
-              className="text-sm px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition"
-              onClick={() =>
-                setNotifications((prev) =>
-                  prev.filter((n) => n.id !== notif.id)
-                )
-              }
-            >
-              OK
-            </button>
+            <span className="text-gray-300 text-1xl">{notif.message}</span>{" "}
+            {/* Keeping bold text unchanged */}
           </div>
         ))}
       </div>
 
       {/* Popup Modal */}
-      {showPopup && (
+      {/* {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
           <div
             className="relative bg-[#1F1F22] backdrop-blur-md p-8 rounded-xl flex flex-col items-center justify-center"
@@ -175,7 +201,7 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
