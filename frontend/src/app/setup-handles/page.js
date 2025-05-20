@@ -28,10 +28,6 @@ export default function SetupHandlesPage() {
 
     var auth = "Bearer " + token;
 
-    console.log("LeetCode Handle:", leetCode);
-    console.log("Codeforces Handle:", codeforces);
-    console.log("CodeChef Handle:", codechef);
-
     const platformusernames = {
       codeChefUsername: codechef,
       codeForcesUsername: codeforces,

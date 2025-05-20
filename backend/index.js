@@ -246,6 +246,9 @@ function handleJoinRoom(req, res) {
   user.roomIds.push(roomId);
   room.people.push(username);
 
+  writer(users);
+  roomWriter(rooms);
+
   res.status(200).json({
     message: "Joined room successfully",
     id: roomId,
@@ -253,6 +256,18 @@ function handleJoinRoom(req, res) {
 }
 
 app.post("/joinRoom/:id", authentication, handleJoinRoom);
+
+function handleFetchRooms(req, res) {
+  const username = req.user.username;
+  let users = reader();
+  let user = users.find((u) => u.username === username);
+  let rooms = user.roomIds;
+
+  const roomIds = rooms.map((room) => ({ id: room }));
+  res.status(200).json(roomIds);
+}
+
+app.post("/fetchRooms", authentication, handleFetchRooms);
 
 function temp(req, res) {
   res.send("Hello World!");
