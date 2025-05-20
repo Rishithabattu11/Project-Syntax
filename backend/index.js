@@ -232,7 +232,7 @@ function handleCreateRoom(req, res) {
 app.post("/createRoom", authentication, handleCreateRoom);
 
 function handleJoinRoom(req, res) {
-  const roomId = req.params.id;
+  const roomId = Number(req.params.id);
   const username = req.user.username;
 
   let users = reader();
@@ -243,8 +243,12 @@ function handleJoinRoom(req, res) {
 
   if (!room) return res.status(404).send("Room Not Found");
 
-  user.roomIds.push(roomId);
-  room.people.push(username);
+  let checker = user.roomIds.find((r) => r === roomId);
+
+  if (!checker) {
+    user.roomIds.push(roomId);
+    room.people.push(username);
+  }
 
   writer(users);
   roomWriter(rooms);
