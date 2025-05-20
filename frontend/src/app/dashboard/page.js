@@ -91,10 +91,9 @@ export default function Dashboard() {
       `http://localhost:4000/joinRoom/${roomId}`,
       sendObj
     );
-
+    console.log(response.ok);
     if (response.ok) {
       const data = await response.json();
-      console.log("Joined room successfully!", data);
       fetchRooms();
       router.push(`/room/${roomId}`);
       setShowPopup(false);
@@ -107,7 +106,7 @@ export default function Dashboard() {
   return (
     <div
       className="min-h-screen flex text-white bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/hellorita.jpg')" }}
+      style={{ backgroundImage: "url('/ritaa2.jpg')" }}
     >
       {/* Sidebar */}
       <div className="w-20 bg-white/1 backdrop-blur-md shadow-lg flex flex-col items-center py-6 space-y-6 rounded-r-xl">
@@ -120,15 +119,23 @@ export default function Dashboard() {
             {uniqueEmojis[index % uniqueEmojis.length]}
           </button>
         ))}
+        {/* MyTodo Icon - Sticking to Bottom */}
+        <button
+          className="w-12 h-35 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-110 absolute bottom-6 text-blue-500 hover:text-blue-700"
+          onClick={() => router.push("/my-todo")}
+        >
+          📝{" "}
+          {/* You can replace this with an actual icon if using libraries like Heroicons or Font Awesome */}
+        </button>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative">
         <h1 className="text-5xl mb-10">Welcome to Dashboard !</h1>
-        <div className="flex gap-16">
-          <div className="w-96 p-8 rounded-xl bg-white/10 backdrop-blur-sm shadow-lg text-center border border-white/40">
+        <div className="flex gap-18">
+          <div className="w-96 p-7 rounded-xl bg-white/10 backdrop-blur-sm shadow-lg text-center border border-white/40">
             <h2 className="text-2xl font-semibold mb-4">Create Room</h2>
-            <p className="mb-4 text-white/80">
+            <p className="mb-9 text-white/80">
               Start your own session and invite others!
             </p>
             <button
