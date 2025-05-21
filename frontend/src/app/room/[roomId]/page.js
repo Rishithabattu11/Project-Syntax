@@ -1,5 +1,4 @@
 "use client";
-// import { useRouter } from "next/navigation";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -36,7 +35,6 @@ const emojis = [
 ];
 
 // const mockRooms = [{ id: "123456" }, { id: "654321" }, { id: "987654" }];
-
 export default function RoomPage() {
   const router = useRouter();
   const [showPopup, setShowPopup] = useState(false);
@@ -58,7 +56,7 @@ export default function RoomPage() {
 
     if (response.ok) {
       tempRooms = await response.json();
-      setRooms(tempRooms); // simulate backend fetch
+      setRooms(tempRooms);
       const shuffled = [...emojis].sort(() => Math.random() - 0.5);
       setUniqueEmojis(shuffled.slice(0, tempRooms.length));
     } else {
@@ -68,11 +66,6 @@ export default function RoomPage() {
   useEffect(() => {
     fetchRooms();
   }, []);
-
-  // useEffect(() => {
-  //   const shuffled = [...emojis].sort(() => Math.random() - 0.5);
-  //   setUniqueEmojis(shuffled.slice(0, mockRooms.length));
-  // }, []);
 
   const addNotification = (message, type = "error") => {
     const id = Date.now();
@@ -130,7 +123,7 @@ export default function RoomPage() {
           />
         </button>
 
-        {/* MyTodo Icon - Sticking to Bottom */}
+        {/* MyTodo Icon*/}
         <button
           className="w-12 h-15 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-180 absolute bottom-6 text-blue-500 hover:text-blue-700"
           onClick={() => router.push("/my-todo")}
