@@ -1,18 +1,22 @@
-# 👨‍💻 Project-Syntax: Crack Code Together!
+# 👨‍💻 Ranked In: Crack Code Together!
 
-Welcome to **Project-Syntax**, a collaborative coding hub where you and your tech-squad can conquer coding questions **together**! This platform is designed exclusively for coders who love teamwork, accountability, and leveling up on competitive programming platforms.
+Welcome to **Ranked In**, a collaborative coding hub where you and your tech-squad can conquer coding questions **together**! Built for coders who thrive on teamwork, accountability, and a little friendly competition.
+
+---
 
 ## 🚀 About the Project
 
-**Project-Syntax** is a productivity-first platform built for groups of coding enthusiasts. Whether you're prepping for tech interviews, grinding CP contests, or just vibing with your coding buddies — this is your home base. 💻💥
+**Ranked In** is a productivity-focused platform for coding groups. Whether you're grinding for tech interviews, competitive contests, or just vibing with your coding crew — this is your home base. 💻💥
 
-### 🔧 Core Functionalities
+---
 
-#### ✅ 1. Shared Coding To-Do Lists
+## 🔧 Core Functionalities
 
-Collaborate like never before! You and your friends can:
+### ✅ 1. Shared Coding To-Do Lists
 
-- Create a **shared to-do list** of coding questions.
+Collaborate like never before:
+
+- Create **shared to-do lists** with your team.
 - Add problems from platforms like:
   - LeetCode
   - CodeChef
@@ -20,51 +24,62 @@ Collaborate like never before! You and your friends can:
   - Codeforces
   - HackerEarth
   - AtCoder
-  - CodeStudio (Coding Ninjas 360)
-- Each entry includes:
+  - CodeStudio (Ninjas 360)
+- Each task includes:
   - 📌 **Question Name**
-  - 🔗 **Link to the problem** with Platform icon for visual clarity
-  - 🧑‍💻 **User avatar** (who added it)
+  - 🔗 **Link to the problem** (with platform icon)
+  - 🧑‍💻 **User avatar** of who added it
 
-> Keep your prep organized, transparent, and efficient.
-
-#### 📊 2. Track Your Group’s Progress
-
-Turn your friend group into a coding clan with stats!
-
-- View each member’s coding **profiles and status** from multiple platforms.
-- Track:
-  - Number of questions solved
-  - Rankings (based on problem solving activity)
-  - Platform-specific metrics
-- Visual **leaderboard** for healthy competition & motivation
-
-> No more guessing who's slacking off — the scoreboard speaks truth 😄
+> Stay organized, stay accountable.
 
 ---
 
-## 🎯 Target Audience
+### 📊 2. Track Group Progress with Leaderboards
 
-- College students prepping for placements & tech interviews
-- Peer coding groups
-- CP/DSA lovers & LeetCode warriors
-- Tech clubs & coding communities
+Turn your squad into a coding clan!
 
-## 🛠️ Built With
+- View members' CP handles and profiles
+- Track:
+  - Number of problems solved
+  - Rank progression
+  - Platform-specific stats
+- A clean, competitive **leaderboard** keeps the motivation high
 
-Frontend:
+> No more slacking — the scoreboard tells all 😄
 
-- HTML, CSS, JavaScript
+---
 
-Backend:
+## 🎯 Who's This For?
 
-- Node.js, Express.js
+- College students prepping for placements
+- Peer coding & accountability groups
+- CP/DSA fanatics & LeetCode grinders
+- Tech clubs and student communities
 
-## 📌 How to Use
+---
 
-1. **Sign up / Login** with your account
-2. **Create or join** a coding group
-3. Start:
-   - 📝 Adding coding questions
-   - 📈 Tracking progress
-   - 🏆 Competing on the leaderboard
+## 🛠️ Tech Stack
+
+### 🧑‍🎨 Frontend
+- [Next.js](https://nextjs.org/) (App Router)
+- [React.js](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+### ⚙️ Backend
+- [Node.js](https://nodejs.org/)
+- [Express.js](https://expressjs.com/)
+
+### 🗃️ Database *(Coming Soon!)*
+- [MongoDB](https://www.mongodb.com/)
+
+### 🧰 Developer Tools
+- Git, GitHub, Postman, VS Code
+
+---
+
+## 📌 How to Get Started
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/abhiramseshu/Project-Syntax.git
+   cd Project-Syntax
