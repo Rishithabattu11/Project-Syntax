@@ -10,7 +10,7 @@ export default function Home() {
   const [authMode, setAuthMode] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (message) => {
@@ -181,7 +181,7 @@ export default function Home() {
                   className="w-[100%] p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-[#5C43DA] outline-none"
                 />
 
-                {/* ✅ Smaller Toggle Switch BELOW Password Input */}
+                {/* Smaller Toggle */}
                 <div className="w-[100%] flex items-center gap-2 mt-1">
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
