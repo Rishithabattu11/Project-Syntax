@@ -218,7 +218,7 @@ export default function SetupHandlesPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full bg-[#5C43DA] hover:bg-[#44387c] transition px-4 py-2 rounded-md text-sm font-medium text-white ${
+            className={`w-full bg-[#5C43DA] hover:bg-[#44387c] transition px-4 py-2 rounded-md text-sm font-medium text-white cursor-pointer ${
               isSubmitting ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={isSubmitting}
@@ -233,7 +233,7 @@ export default function SetupHandlesPage() {
         {errorMessages.map((error, index) => (
           <div
             key={index}
-            className="bg-[#F2994A] text-white text-xs px-3 py-2 rounded-xl shadow-lg animate-fade-in-up transition-all"
+            className="bg-[#E02E2A] text-white text-xs px-3 py-2 rounded-xl shadow-lg animate-fade-in-up transition-all"
           >
             {error.message}
           </div>

@@ -103,29 +103,32 @@ export default function Dashboard() {
   };
 
   return (
-    <div
-      className="min-h-screen flex text-white bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/ritaa2.jpg')" }}
-    >
-      {/* Sidebar */}
-      <div className="w-20 bg-white/1 backdrop-blur-md shadow-lg flex flex-col items-center py-6 space-y-6 rounded-r-xl">
+      <div
+    className="min-h-screen flex text-white bg-cover bg-center bg-no-repeat"
+    style={{ backgroundImage: "url('/ritaa2.jpg')" }}
+  >
+    {/* Sidebar */}
+    <div className="relative w-17 bg-white/1 backdrop-blur-md shadow-lg flex flex-col items-center pt-6 rounded-r-xl">
+      <div className="flex flex-col items-center space-y-6">
         {rooms.map((room, index) => (
           <button
             key={room.id}
-            className="w-12 h-12 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-120"
+            className="w-12 h-12 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-120 cursor-pointer"
             onClick={() => router.push(`/room/${room.id}`)}
           >
             {uniqueEmojis[index % uniqueEmojis.length]}
           </button>
         ))}
-        {/* MyTodo Icon*/}
-        <button
-          className="w-12 h-35 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-110 absolute bottom-6 text-blue-500 hover:text-blue-700"
-          onClick={() => router.push("/my-todo")}
-        >
-          📝{" "}
-        </button>
       </div>
+      {/* MyTodo Icon */}
+      <button
+        className="w-12 h-18 text-2xl flex items-center justify-center rounded-full transition-transform hover:scale-110 absolute bottom-4 text-blue-500 hover:text-blue-700 cursor-pointer"
+        onClick={() => router.push("/my-todo")}
+      >
+        📝{""}
+      </button>
+    </div>
+
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative">
@@ -138,9 +141,9 @@ export default function Dashboard() {
             </p>
             <button
               onClick={handleCreateRoom}
-              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition"
+              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition cursor-pointer"
             >
-              Generate & Enter Room
+              Generate Room
             </button>
           </div>
           <div className="w-96 p-8 rounded-xl bg-white/10 backdrop-blur-md shadow-lg text-center border border-white/40">
@@ -154,7 +157,7 @@ export default function Dashboard() {
             />
             <button
               onClick={handleJoinRoom}
-              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition"
+              className="w-full py-3 rounded-lg bg-white/30 hover:bg-white/50 text-white text-lg font-semibold transition cursor-pointer"
             >
               Join Room
             </button>

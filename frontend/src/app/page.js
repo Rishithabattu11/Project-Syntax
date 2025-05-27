@@ -59,6 +59,20 @@ export default function Home() {
     } else {
       addNotification("❌ Login failed or token not received");
     }
+
+    var token = localStorage.getItem("token");
+    var auth = "Bearer " + token;
+
+    var sendObj = {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: auth,
+      },
+    };
+
+    var results = fetch("http://localhost:4000/updateRatings", sendObj);
+
   };
 
   const handleSignup = async () => {
@@ -147,13 +161,13 @@ export default function Home() {
             <div className="space-y-4 flex flex-col items-center">
               <button
                 onClick={() => setAuthMode("login")}
-                className="w-48 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
+                className="w-48 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white cursor-pointer"
               >
                 Login
               </button>
               <button
                 onClick={() => setAuthMode("signup")}
-                className="w-48 bg-white text-gray-900 hover:bg-gray-300 transition px-6 py-3 rounded-lg text-lg font-semibold text-center"
+                className="w-48 bg-white text-gray-900 hover:bg-gray-300 transition px-6 py-3 rounded-lg text-lg font-semibold text-center cursor-pointer"
               >
                 Sign Up
               </button>
@@ -203,7 +217,7 @@ export default function Home() {
 
                 <button
                   type="button"
-                  className="w-30 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white"
+                  className="w-30 bg-[#5C43DA] hover:bg-[#44387c] transition px-6 py-3 rounded-lg text-lg font-semibold text-center text-white cursor-pointer"
                   onClick={authMode === "login" ? handleLogin : handleSignup}
                 >
                   {authMode === "login" ? "Login" : "Sign Up"}
@@ -216,7 +230,7 @@ export default function Home() {
                   <>
                     Don't have an account?{" "}
                     <button
-                      className="text-[#5C43DA] hover:underline"
+                      className="text-[#5C43DA] hover:underline cursor-pointer"
                       onClick={() => setAuthMode("signup")}
                     >
                       Sign up instead
@@ -226,7 +240,7 @@ export default function Home() {
                   <>
                     Already have an account?{" "}
                     <button
-                      className="text-[#5C43DA] hover:underline"
+                      className="text-[#5C43DA] hover:underline cursor-pointer"
                       onClick={() => setAuthMode("login")}
                     >
                       Login instead

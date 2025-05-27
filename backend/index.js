@@ -190,6 +190,9 @@ async function handleRatings(req, res) {
       codeChefUsername: codeChefUsername,
       codeForcesUsername: codeForcesUsername,
       leetCodeUsername: leetCodeUsername,
+      codeChefRating: val1,
+      codeForcesRating: val2,
+      leetCodeRating: val3,
     };
     user.handles = Obj;
     writer(users);
@@ -272,6 +275,25 @@ function handleFetchRooms(req, res) {
 }
 
 app.post("/fetchRooms", authentication, handleFetchRooms);
+
+async function handleUpdateRatings(req, res) {
+  const username = req.user.username;
+  let users = reader();
+  let user = users.find((u) => u.username === username);
+
+  const { codeChefUsername, codeForcesUsername, leetCodeUsername } =
+    user.handles;
+
+  var val1 = await getCodeChefRating(codeChefUsername);
+  var val2 = await getCodeforcesRating(codeForcesUsername);
+  var val3 = await getLeetcodeRating(leetCodeUsername);
+  user.handles.codeChefRating = val1;
+  user.handles.codeForcesRating = val2;
+  user.handles.leetCodeRating = val3;
+  writer(users);
+}
+
+app.post("/updateRatings", authentication, handleUpdateRatings);
 
 function temp(req, res) {
   res.send("Hello World!");
