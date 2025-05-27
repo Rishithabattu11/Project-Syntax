@@ -44,7 +44,7 @@ export default function SetupHandlesPage() {
       body: JSON.stringify(platformusernames),
     };
 
-    var results = await fetch("http://localhost:4000/getRatings", sendObj);
+    var results = await fetch("http://localhost:4000/fetchRatings", sendObj);
 
     setIsLoading(false);
 

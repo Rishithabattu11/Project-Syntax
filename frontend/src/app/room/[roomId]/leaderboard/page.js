@@ -23,8 +23,6 @@ ChartJS.register(
   Legend
 );
 
-let tempRooms = [];
-
 const emojis = [
   "🔥",
   "🚀",
@@ -56,31 +54,205 @@ const emojis = [
 
 export default function RoomPage() {
   const router = useRouter();
-  const [showPopup, setShowPopup] = useState(false);
   const { roomId } = useParams();
+  const [showPopup, setShowPopup] = useState(false);
   const [popupMode, setPopupMode] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [uniqueEmojis, setUniqueEmojis] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [roomNames, setRoomNames] = useState([]);
   const chartRef = useRef(null);
   const [crownPos, setCrownPos] = useState({ x: 521, y: 175 });
-  const [selectedMetric, setSelectedMetric] = useState("rating1");
+  const [selectedMetric, setSelectedMetric] = useState("Overall");
+  const [ratings, setRatings] = useState({
+    codechef: [],
+    codeforces: [],
+    leetcode: [],
+    overall: [],
+  });
 
-  const rawNames = ["Ravi", "Balraj", "Abhiram", "Sneha", "Kiran", "Rishi"];
+  useEffect(() => {
+    const fetchRoomNames = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:4000/getPeople/${roomId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setRoomNames(data);
+        } else {
+          console.error("Authentication Failed:", response.status);
+        }
+      } catch (err) {
+        console.error("Error fetching room people:", err);
+      }
+    };
+    if (roomId) fetchRoomNames();
+  }, [roomId]);
 
-  const rating1 = [1730, 1589, 1980, 1500, 1100, 2000];
-  const rating2 = [1600, 1422, 1900, 1380, 990, 1850];
-  const rating3 = [1650, 1488, 1940, 1410, 1050, 1950];
+  useEffect(() => {
+    let intervalId;
 
-  const overall = rating1.map((_, i) => rating1[i] + rating2[i] + rating3[i]);
+    const fetchRatings = async () => {
+      const token = localStorage.getItem("token");
+      const cc = [];
+      const cf = [];
+      const lc = [];
+
+      for (const name of roomNames) {
+        try {
+          const response = await fetch(
+            `http://localhost:4000/getRatings/${name}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            cc.push(data.CodeChefRating);
+            cf.push(data.CodeforcesRating);
+            lc.push(data.LeetcodeRating);
+          } else {
+            cc.push(0);
+            cf.push(0);
+            lc.push(0);
+          }
+        } catch (err) {
+          console.error("Error fetching rating for", name, err);
+          cc.push(0);
+          cf.push(0);
+          lc.push(0);
+        }
+      }
+
+      const overall = cc.map((_, i) => cc[i] + cf[i] + lc[i]);
+      setRatings({ codechef: cc, codeforces: cf, leetcode: lc, overall });
+    };
+
+    if (roomNames.length > 0) {
+      fetchRatings(); // initial fetch
+      intervalId = setInterval(fetchRatings, 60000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [roomNames]);
 
   const getRatings = () => {
-    if (selectedMetric === "rating1") return rating1;
-    if (selectedMetric === "rating2") return rating2;
-    if (selectedMetric === "rating3") return rating3;
-    if (selectedMetric === "overall") return overall;
-    return [];
+    switch (selectedMetric) {
+      case "Codechef":
+        return ratings.codechef;
+      case "Codeforces":
+        return ratings.codeforces;
+      case "Leetcode":
+        return ratings.leetcode;
+      case "Overall":
+      default:
+        return ratings.overall;
+    }
   };
+
+  const updateChart = () => {
+    const rankings = getRatings();
+    const players = roomNames.map((name, idx) => ({
+      name,
+      score: rankings[idx],
+    }));
+    players.sort((a, b) => b.score - a.score);
+
+    const sortedNames = players.map((p) => p.name);
+    const sortedScores = players.map((p) => p.score);
+    const decoratedLabels = sortedNames.map((name, idx) => {
+      if (idx === 0) return "🎖️ " + name;
+      if (idx === 1) return "🥈 " + name;
+      if (idx === 2) return "🥉 " + name;
+      return name;
+    });
+
+    const chart = chartRef.current;
+    if (!chart) return;
+    const chartInstance = chart;
+    const {
+      ctx,
+      chartArea: { left, right },
+    } = chartInstance;
+
+    const newBackgrounds = sortedScores.map((_, i) => {
+      const gradient = ctx.createLinearGradient(left, 0, right, 0);
+      if (i === 0) {
+        gradient.addColorStop(0, "#b89d0d");
+        gradient.addColorStop(0.5, "#c9b037");
+        gradient.addColorStop(1, "#f0e68c");
+      } else if (i === 1) {
+        gradient.addColorStop(0, "#8a8a8a");
+        gradient.addColorStop(0.5, "#bcbcbc");
+        gradient.addColorStop(1, "#a8a9ad");
+      } else if (i === 2) {
+        gradient.addColorStop(0, "#6e4b25");
+        gradient.addColorStop(0.5, "#aa7f45");
+        gradient.addColorStop(1, "#b87333");
+      } else {
+        gradient.addColorStop(0, "#5C43DA");
+        gradient.addColorStop(0.5, "#9E78FF");
+        gradient.addColorStop(1, "#5C43DA");
+      }
+      return gradient;
+    });
+
+    chartInstance.data.labels = decoratedLabels;
+    chartInstance.data.datasets[0].data = sortedScores;
+    chartInstance.data.datasets[0].backgroundColor = newBackgrounds;
+    chartInstance.update();
+  };
+
+  useEffect(() => {
+    if (!chartRef.current) return;
+    const timeout = setTimeout(() => {
+      updateChart();
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [ratings, selectedMetric]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:4000/fetchRooms", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const tempRooms = await response.json();
+          setRooms(tempRooms);
+          const shuffled = [...emojis].sort(() => Math.random() - 0.5);
+          setUniqueEmojis(shuffled.slice(0, tempRooms.length));
+        } else {
+          console.error("Authentication Failed:", response.status);
+        }
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+      }
+    };
+    fetchRooms();
+  }, []);
+
+  const activePath =
+    typeof window !== "undefined" ? window.location.pathname : "";
 
   const options = {
     indexAxis: "y",
@@ -128,97 +300,6 @@ export default function RoomPage() {
     },
   };
 
-  const updateChart = () => {
-    const rankings = getRatings();
-    const players = rawNames.map((name, idx) => ({
-      name,
-      score: rankings[idx],
-    }));
-    players.sort((a, b) => b.score - a.score);
-
-    const sortedNames = players.map((p) => p.name);
-    const sortedScores = players.map((p) => p.score);
-    const decoratedLabels = sortedNames.map((name, idx) => {
-      if (idx === 0) return "💖 " + name;
-      if (idx === 1) return "🥈 " + name;
-      if (idx === 2) return "🥉 " + name;
-      return name;
-    });
-
-    const chart = chartRef.current;
-    if (!chart) return;
-    const chartInstance = chart;
-    const {
-      ctx,
-      chartArea: { left, right },
-    } = chartInstance;
-
-    const newBackgrounds = sortedScores.map((_, i) => {
-      const gradient = ctx.createLinearGradient(left, 0, right, 0);
-      if (i === 0) {
-        gradient.addColorStop(0, "#b89d0d");
-        gradient.addColorStop(0.5, "#c9b037");
-        gradient.addColorStop(1, "#f0e68c");
-      } else if (i === 1) {
-        gradient.addColorStop(0, "#8a8a8a");
-        gradient.addColorStop(0.5, "#bcbcbc");
-        gradient.addColorStop(1, "#a8a9ad");
-      } else if (i === 2) {
-        gradient.addColorStop(0, "#6e4b25");
-        gradient.addColorStop(0.5, "#aa7f45");
-        gradient.addColorStop(1, "#b87333");
-      } else {
-        gradient.addColorStop(0, "#5C43DA");
-        gradient.addColorStop(0.5, "#9E78FF");
-        gradient.addColorStop(1, "#5C43DA");
-      }
-      return gradient;
-    });
-
-    chartInstance.data.labels = decoratedLabels;
-    chartInstance.data.datasets[0].data = sortedScores;
-    chartInstance.data.datasets[0].backgroundColor = newBackgrounds;
-    chartInstance.update();
-  };
-
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    const timeout = setTimeout(() => {
-      updateChart();
-    }, 50); // small delay to ensure chart is mounted
-
-    return () => clearTimeout(timeout);
-  }, [selectedMetric, chartRef]);
-
-  const fetchRooms = async () => {
-    var sendObj = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-
-    var response = await fetch("http://localhost:4000/fetchRooms", sendObj);
-
-    if (response.ok) {
-      tempRooms = await response.json();
-      setRooms(tempRooms);
-      const shuffled = [...emojis].sort(() => Math.random() - 0.5);
-      setUniqueEmojis(shuffled.slice(0, tempRooms.length));
-    } else {
-      console.error("Authentication Failed:", response.status);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-
-  const activePath =
-    typeof window !== "undefined" ? window.location.pathname : "";
-
   return (
     <div className="min-h-screen text-white bg-[#1E1E20] flex">
       {/* Sidebar */}
@@ -237,7 +318,7 @@ export default function RoomPage() {
           onClick={() => router.push("/dashboard")}
         >
           <img
-            src="\home.png"
+            src="/home.png"
             alt="Home Icon"
             className="w-full h-full object-cover"
           />
@@ -282,7 +363,7 @@ export default function RoomPage() {
         <div className="fixed w-full z-50 top-16">
           <div className="w-full h-12 bg-[#1A1B1F] shadow-md flex items-center justify-center px-6 border-b border-[#2b2b2b]">
             <div className="flex space-x-4">
-              {["rating1", "rating2", "rating3", "overall"].map((type) => (
+              {["Overall", "Codechef", "Codeforces", "Leetcode"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setSelectedMetric(type)}
@@ -307,7 +388,10 @@ export default function RoomPage() {
           >
             👑
           </div>
-          <div className="w-full h-[500px] bg-[#2B2B30] rounded-2xl shadow-lg p-6 relative overflow-hidden">
+          <div
+            className="w-full bg-[#2B2B30] rounded-2xl shadow-lg p-6 relative overflow-hidden"
+            style={{ height: `${Math.max(400, roomNames.length * 60)}px` }}
+          >
             <Bar
               ref={chartRef}
               data={{ labels: [], datasets: [{ label: "Rating", data: [] }] }}

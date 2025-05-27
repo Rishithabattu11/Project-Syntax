@@ -177,7 +177,7 @@ async function getLeetcodeRating(username) {
   return finalRating;
 }
 
-async function handleRatings(req, res) {
+async function handlefetchRatings(req, res) {
   const { codeChefUsername, codeForcesUsername, leetCodeUsername } = req.body;
   const initial = req.headers.initial;
   var val1 = await getCodeChefRating(codeChefUsername);
@@ -204,7 +204,7 @@ async function handleRatings(req, res) {
   });
 }
 
-app.post("/getRatings", authentication, handleRatings);
+app.post("/fetchRatings", authentication, handlefetchRatings);
 
 function generateRoomId() {
   return Math.floor(100000 + Math.random() * 900000);
@@ -291,9 +291,38 @@ async function handleUpdateRatings(req, res) {
   user.handles.codeForcesRating = val2;
   user.handles.leetCodeRating = val3;
   writer(users);
+  res.send();
 }
 
 app.post("/updateRatings", authentication, handleUpdateRatings);
+
+function handlegetRatings(req, res){
+  const username = req.params.id;
+  let users = reader();
+  let user = users.find((u) => u.username === username);
+  let val1 = user.handles.codeChefRating;
+  let val2 = user.handles.codeForcesRating;
+  let val3 = user.handles.leetCodeRating;
+  console.log(val1);
+  console.log(val2);
+  console.log(val3);
+  res.status(200).json({
+    CodeChefRating: val1,
+    CodeforcesRating: val2,
+    LeetcodeRating: val3,
+  });
+}
+
+app.get("/getRatings/:id", authentication, handlegetRatings);
+
+function handlegetPeople(req, res){
+  const roomId = Number(req.params.id);
+  const rooms = roomReader();
+  let room = rooms.find((r) => r.id === roomId);
+  res.status(200).json(room.people);
+}
+
+app.get("/getPeople/:id", authentication, handlegetPeople);
 
 function temp(req, res) {
   res.send("Hello World!");
