@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import puppeteer from "puppeteer";
 
 const app = express();
 const port = 4000;
@@ -89,25 +90,47 @@ function handleLogin(req, res) {
 
 app.post("/login", handleLogin);
 
+// async function getCodeChefRating(username) {
+//   let result = -1;
+//   let url = `https://codechef-api.vercel.app/handle/${username}`;
+//   var sendgetCodeChefRatingObj = { method: "GET" };
+//   let fecthResult = await fetch(url, sendgetCodeChefRatingObj).catch(
+//     (error) => {
+//       console.error("Error:", error);
+//       return -1;
+//     }
+//   );
+//   if (fecthResult === -1 || fecthResult.status != 200) {
+//     return -1;
+//   }
+//   result = await fecthResult.json();
+//   if (result.status == 404) {
+//     return -1;
+//   }
+//   return result.currentRating;
+// }
+
 async function getCodeChefRating(username) {
   let result = -1;
-  let url = `https://codechef-api.vercel.app/handle/${username}`;
-  var sendgetCodeChefRatingObj = { method: "GET" };
-  let fecthResult = await fetch(url, sendgetCodeChefRatingObj).catch(
-    (error) => {
-      console.error("Error:", error);
-      return -1;
-    }
-  );
-  if (fecthResult === -1 || fecthResult.status != 200) {
+  let url = `https://www.codechef.com/users/${username}`;
+
+  try {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.waitForSelector(".rating-number", { timeout: 5000 });
+
+    result = await page.$eval(".rating-number", (el) => el.textContent.trim());
+
+    await browser.close();
+    return result;
+  } catch (err) {
     return -1;
   }
-  result = await fecthResult.json();
-  if (result.status == 404) {
-    return -1;
-  }
-  return result.currentRating;
 }
+
+// getCodeChefRating("YOUR_CODECHEF_USERNAME").then(console.log);
 
 async function getCodeforcesRating(username) {
   let result = -1;
@@ -296,7 +319,7 @@ async function handleUpdateRatings(req, res) {
 
 app.post("/updateRatings", authentication, handleUpdateRatings);
 
-function handlegetRatings(req, res){
+function handlegetRatings(req, res) {
   const username = req.params.id;
   let users = reader();
   let user = users.find((u) => u.username === username);
@@ -315,7 +338,7 @@ function handlegetRatings(req, res){
 
 app.get("/getRatings/:id", authentication, handlegetRatings);
 
-function handlegetPeople(req, res){
+function handlegetPeople(req, res) {
   const roomId = Number(req.params.id);
   const rooms = roomReader();
   let room = rooms.find((r) => r.id === roomId);
